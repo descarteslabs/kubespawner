@@ -108,7 +108,7 @@ def make_cluster_role_binding(namespace, name, service_account):
     role_binding_role_ref = V1RoleRef(api_group='', kind='ClusterRole', name=name)
     role_binding_subjects = V1Subject(api_group='', kind='ServiceAccount', namespace=namespace, name=name)
 
-    return V1ClusterRoleBinding(kind='ClusterRoleBinding',
+    return V1RoleBinding(kind='RoleBinding',
                          metadata=role_binding_metadata,
                          role_ref=role_binding_role_ref,
                          subjects=[role_binding_subjects])
