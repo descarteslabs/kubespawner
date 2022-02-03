@@ -285,9 +285,9 @@ class KubeSpawner(Spawner):
         allow_none=True,
         help="""
         Template to form the namespace destination for a user's pods & pvcs.
-          
+
         `{username}` is expanded to the escaped, dns-label safe username.
-        
+
         If it is a callable instead of a template string, it will be
         called with one parameter (the spawner instance), and should return a
         string fairly quickly (no blocking operations please!).
@@ -1146,7 +1146,7 @@ class KubeSpawner(Spawner):
         config=True,
         help="""
         Time in seconds for the pod to be in `terminating` state before is forcefully killed.
-        
+
         Increase this if you need more time to execute a `preStop` lifecycle hook.
 
         See https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods for
@@ -1286,8 +1286,11 @@ class KubeSpawner(Spawner):
             servername = ''
             safe_servername = ''
 
-        legacy_escaped_username = ''.join([s if s in safe_chars else '-' for s in self.user.name.lower()])
-        safe_username = escapism.escape(self.user.name, safe=safe_chars, escape_char='-').lower()
+        # HACK HACK HACK: We use 'jupyter-{username}' for our namespaces. But a namespace
+        # name can be up to 63 characters. Subtract the 'jupyter-' part and we're down
+        # to 55. We're simply truncated the name here to 55 characters to avoid problems.
+        legacy_escaped_username = ''.join([s if s in safe_chars else '-' for s in self.user.name.lower()])[0:55]
+        safe_username = escapism.escape(self.user.name, safe=safe_chars, escape_char='-').lower()[0:55]
         return template.format(
             userid=self.user.id,
             username=safe_username,
