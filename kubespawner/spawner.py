@@ -12,6 +12,7 @@ import string
 import multiprocessing
 from concurrent.futures import ThreadPoolExecutor
 import warnings
+import datetime
 
 from tornado import gen
 from tornado.ioloop import IOLoop
@@ -77,7 +78,7 @@ class EventReflector(ResourceReflector):
     def events(self):
         return sorted(
             self.resources.values(),
-            key=lambda x: x.last_timestamp if x.last_timestamp is not None else 0.,
+            key=lambda x: x.last_timestamp if x.last_timestamp is not None else datetime.datetime.utcfromtimestamp(0),
         )
 
 
